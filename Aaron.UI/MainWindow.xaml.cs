@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Aaron
+namespace Aaron.UI
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
