@@ -188,7 +188,7 @@ namespace Aaron.Core.Compression
 
             var blocksSorted = new List<CompressedBlock>(outBlocks.Count);
 
-            if (blocksSorted.Count == 1)
+            if (outBlocks.Count == 1)
             {
                 blocksSorted.Add(outBlocks[0]);
             }
