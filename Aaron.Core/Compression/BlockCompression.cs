@@ -36,11 +36,7 @@ namespace Aaron.Core.Compression
                 throw new InvalidDataException("Invalid header");
             }
 
-            var data = new byte[fileHeader.USize];
-
-            BlockDecompress(stream, data);
-
-            return data;
+            return ReadCompressedBlocks(stream, fileHeader.USize);
         }
 
         /// <summary>
