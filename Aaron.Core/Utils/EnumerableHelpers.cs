@@ -8,7 +8,7 @@ namespace Aaron.Core.Utils
     /// <summary>
     /// Utility functions and extensions for <see cref="IEnumerable{T}"/>.
     /// </summary>
-    public static class EnumerableUtils
+    public static class EnumerableHelpers
     {
         /// <summary>
         /// Returns distinct items in a <see cref="IEnumerable{T}"/> based on keys generated through a given key function.
