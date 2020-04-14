@@ -21,6 +21,16 @@ namespace Aaron.Core.Compression
         }
 
         /// <summary>
+        /// Reads compressed blocks from the given stream and returns a <see cref="MemoryStream"/> containing the decompressed contents.
+        /// </summary>
+        /// <param name="stream">The stream to read compressed blocks from.</param>
+        /// <returns>A new <see cref="MemoryStream"/> containing the decompressed data.</returns>
+        public static MemoryStream StreamBlockFile(Stream stream)
+        {
+            return new MemoryStream(ReadBlockFile(stream));
+        }
+
+        /// <summary>
         /// Reads a compressed-in-place file. This involves reading a header and then
         /// proceeding to a shared routine for decompression.
         /// </summary>
