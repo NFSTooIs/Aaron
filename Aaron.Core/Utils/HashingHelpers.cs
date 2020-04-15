@@ -6,6 +6,13 @@ namespace Aaron.Core.Utils
     {
         public static uint BinHash(string str)
         {
+            if (str.StartsWith("0x"))
+            {
+                if (uint.TryParse(str.Substring(2), NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture,
+                    out uint parsedHash))
+                    return parsedHash;
+            }
+
             var hash = 0xFFFFFFFFu;
 
             foreach (var c in str)
@@ -14,11 +21,6 @@ namespace Aaron.Core.Utils
             }
 
             return hash;
-        }
-
-        public static uint FilteredBinHash(string str)
-        {
-            return str.StartsWith("0x") ? uint.Parse(str.Substring(2), NumberStyles.AllowHexSpecifier) : BinHash(str);
         }
 
         public static uint JenkinsHash(string k, uint init = 0xABCDEF00)

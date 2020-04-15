@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Aaron.Core.Attributes;
 using Aaron.Core.Bundle;
 using Aaron.Core.Data;
 using Aaron.Core.InternalData;
@@ -234,10 +235,37 @@ namespace Aaron.Core.Loaders
         private CarPartAttribute GetPreparedAttribute(CarPartAttributeData attributeData)
         {
             var attributeName = HashMapper.ResolveHash(attributeData.NameHash);
-            CarPartAttribute attribute = attributeName switch
+            CarPartAttribute attribute;
+
+            switch (attributeName)
             {
-                _ => throw new IndexOutOfRangeException("Not implemented: " + attributeName)
-            };
+                case "PARTID_UPGRADE_GROUP":
+                    attribute = new PartIdAttribute();
+                    break;
+                case "LANGUAGEHASH":
+                    attribute = new LanguageHashAttribute();
+                    break;
+                case "KITNUMBER":
+                    attribute = new KitNumberAttribute();
+                    break;
+                case "LOD_NAME_PREFIX_SELECTOR":
+                    attribute = new LodNamePrefixAttribute();
+                    break;
+                case "LOD_BASE_NAME":
+                    attribute = new LodBaseNameAttribute();
+                    break;
+                default:
+                    attribute = new IntAttribute(attributeData.NameHash);
+                    Debug.WriteLine("WARNING: Unimplemented attribute {0}", new object[] { attributeName });
+                    break;
+            }
+
+            attribute.LoadValue(attributeData);
+
+            if (attribute is StringBasedAttribute sba)
+            {
+                sba.ReadStrings(_stringsDictionary);
+            }
 
             return attribute;
         }

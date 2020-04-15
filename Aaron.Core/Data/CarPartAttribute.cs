@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Aaron.Core.Structures;
+using Aaron.Core.Utils;
 
 namespace Aaron.Core.Data
 {
@@ -19,7 +20,7 @@ namespace Aaron.Core.Data
         /// Gets the name hash of the attribute
         /// </summary>
         /// <returns></returns>
-        public abstract uint GetHash();
+        public virtual uint GetHash() => HashingHelpers.BinHash(GetName());
 
         /// <summary>
         /// Gets the attribute value to be used in the saving process
