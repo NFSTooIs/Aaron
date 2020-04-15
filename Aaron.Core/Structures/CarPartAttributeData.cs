@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Aaron.Core.Structures
 {
     [StructLayout(LayoutKind.Explicit, Pack = 1)]
-    public struct CarPartAttribute
+    public struct CarPartAttributeData
     {
         [FieldOffset(0)]
         public uint NameHash;

@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Aaron.Core.Bundle;
+using Aaron.Core.Data;
 using Aaron.Core.InternalData;
 using Aaron.Core.Structures;
 using Aaron.Core.Utils;
@@ -15,13 +18,14 @@ namespace Aaron.Core.Loaders
     {
         private readonly Database _database;
 
-        private List<CarPartAttribute> _attributes = new List<CarPartAttribute>();
+        private List<CarPartAttributeData> _attributes = new List<CarPartAttributeData>();
         private Dictionary<long, AttributeOffsetTable> _attributeOffsetTables =
             new Dictionary<long, AttributeOffsetTable>();
         private List<uint> _typeNameHashes = new List<uint>();
         private List<DBCarPart> _parts = new List<DBCarPart>();
         private Dictionary<long, string> _stringsDictionary = new Dictionary<long, string>();
         private CarPartPackHeader _header;
+        private List<CarPartAttribute> _preparedAttributes = new List<CarPartAttribute>();
 
         public CarPartDatabaseLoader(Database database)
         {
@@ -129,10 +133,11 @@ namespace Aaron.Core.Loaders
 
             for (int i = 0; i < numAttributes; i++)
             {
-                CarPartAttribute carPartAttribute = BinaryHelpers.ReadStruct<CarPartAttribute>(reader);
+                CarPartAttributeData carPartAttribute = BinaryHelpers.ReadStruct<CarPartAttributeData>(reader);
                 _attributes.Add(carPartAttribute);
             }
 
+            PrepareAttributes();
             Debug.WriteLine("Loaded {0} attributes", _attributes.Count);
         }
 
@@ -189,6 +194,64 @@ namespace Aaron.Core.Loaders
             }
 
             Debug.WriteLine("Loaded {0} parts", _parts.Count);
+            GeneratePartCollections();
+            Debug.WriteLine("Generated part collections");
+        }
+
+        private void GeneratePartCollections()
+        {
+            foreach (var partGroup in _parts.GroupBy(p => p.CarIndex))
+            {
+                var partCollection = new CarPartCollection
+                {
+                    Name = HashMapper.ResolveHash(_typeNameHashes[partGroup.Key])
+                };
+
+                foreach (var dbCarPart in partGroup)
+                {
+                    var carPart = new CarPart
+                    {
+                        Name = HashMapper.ResolveHash(dbCarPart.Hash)
+                    };
+
+                    LoadPartAttributes(carPart, dbCarPart);
+
+                    partCollection.Parts.Add(carPart);
+                }
+
+                _database.CarPartManager.AddCarPartCollection(partCollection);
+            }
+        }
+
+        private void PrepareAttributes()
+        {
+            foreach (var attribute in _attributes)
+            {
+                _preparedAttributes.Add(GetPreparedAttribute(attribute));
+            }
+        }
+
+        private CarPartAttribute GetPreparedAttribute(CarPartAttributeData attributeData)
+        {
+            var attributeName = HashMapper.ResolveHash(attributeData.NameHash);
+            CarPartAttribute attribute = attributeName switch
+            {
+                _ => throw new IndexOutOfRangeException("Not implemented: " + attributeName)
+            };
+
+            return attribute;
+        }
+
+        private void LoadPartAttributes(CarPart carPart, DBCarPart carPartInfo)
+        {
+            AttributeOffsetTable attributeOffsetTable = _attributeOffsetTables[carPartInfo.AttributeTableOffset];
+
+            foreach (var attributeOffset in attributeOffsetTable.Offsets)
+            {
+                var attribute = _preparedAttributes[attributeOffset];
+
+                carPart.Attributes.Add(attribute);
+            }
         }
     }
 }

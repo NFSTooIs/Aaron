@@ -10,10 +10,12 @@ namespace Aaron.Core
     public class Database
     {
         public CarRecordManager CarRecordManager { get; }
+        public CarPartManager CarPartManager { get; }
 
         public Database()
         {
             CarRecordManager = new CarRecordManager(this);
+            CarPartManager = new CarPartManager(this);
         }
     }
 }
