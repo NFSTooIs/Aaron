@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using Aaron.Core.Bundle;
+using Aaron.Core.InternalData;
 using Aaron.Core.Structures;
 using Aaron.Core.Utils;
 
@@ -14,7 +15,13 @@ namespace Aaron.Core.Loaders
     {
         private readonly Database _database;
 
+        private List<CarPartAttribute> _attributes = new List<CarPartAttribute>();
+        private Dictionary<long, AttributeOffsetTable> _attributeOffsetTables =
+            new Dictionary<long, AttributeOffsetTable>();
+        private List<uint> _typeNameHashes = new List<uint>();
+        private List<DBCarPart> _parts = new List<DBCarPart>();
         private Dictionary<long, string> _stringsDictionary = new Dictionary<long, string>();
+        private CarPartPackHeader _header;
 
         public CarPartDatabaseLoader(Database database)
         {
@@ -34,17 +41,17 @@ namespace Aaron.Core.Loaders
             }
 
             reader.BaseStream.Seek(8, SeekOrigin.Current);
-            CarPartPackHeader partPackHeader = BinaryHelpers.ReadStruct<CarPartPackHeader>(reader);
+            _header = BinaryHelpers.ReadStruct<CarPartPackHeader>(reader);
 
-            if (partPackHeader.Version != 6)
+            if (_header.Version != 6)
             {
                 throw new ChunkCorruptedException("Invalid version in CarPartPack header!");
             }
 
             Debug.WriteLine(
                 "Part database: {0} attributes, {1} attribute tables, {2} type names, {3} model tables, {4} parts",
-                partPackHeader.NumAttributes, partPackHeader.NumAttributeTables, partPackHeader.NumTypeNames,
-                partPackHeader.NumModelTables, partPackHeader.NumParts);
+                _header.NumAttributes, _header.NumAttributeTables, _header.NumTypeNames,
+                _header.NumModelTables, _header.NumParts);
         }
 
         /// <summary>
@@ -66,6 +73,122 @@ namespace Aaron.Core.Loaders
             }
 
             Debug.WriteLine("Loaded {0} strings", _stringsDictionary.Count);
+        }
+
+
+        /// <summary>
+        /// Processes the attribute offset table list chunk
+        /// </summary>
+        /// <param name="chunk"></param>
+        /// <param name="reader"></param>
+        public void ProcessAttributeOffsetTablesChunk(Chunk chunk, BinaryReader reader)
+        {
+            if (chunk.Size % 2 != 0)
+            {
+                throw new ChunkCorruptedException("Invalid CarPartPack attribute offset tables chunk!");
+            }
+
+            while (reader.BaseStream.Position < chunk.EndOffset)
+            {
+                var table = new AttributeOffsetTable
+                {
+                    Offset = (reader.BaseStream.Position - chunk.DataOffset) / 2
+                };
+                var numOffsets = reader.ReadUInt16();
+                table.Offsets = new List<ushort>(numOffsets);
+
+                for (var i = 0; i < numOffsets; i++)
+                {
+                    table.Offsets.Add(reader.ReadUInt16());
+                }
+
+                _attributeOffsetTables[table.Offset] = table;
+            }
+
+            Debug.WriteLine("Loaded {0} attribute offset tables", _attributeOffsetTables.Count);
+        }
+
+        /// <summary>
+        /// Processes the attribute list chunk
+        /// </summary>
+        /// <param name="chunk"></param>
+        /// <param name="reader"></param>
+        public void ProcessAttributesChunk(Chunk chunk, BinaryReader reader)
+        {
+            if (chunk.Size % 8 != 0)
+            {
+                throw new ChunkCorruptedException("Invalid CarPartPack attributes chunk!");
+            }
+
+            var numAttributes = chunk.Size >> 3;
+            
+            if (numAttributes != _header.NumAttributes)
+            {
+                throw new ChunkCorruptedException($"CarPartPack header says there are {_header.NumAttributes} attributes, but the attribute list has {numAttributes}!");
+            }
+
+            for (int i = 0; i < numAttributes; i++)
+            {
+                CarPartAttribute carPartAttribute = BinaryHelpers.ReadStruct<CarPartAttribute>(reader);
+                _attributes.Add(carPartAttribute);
+            }
+
+            Debug.WriteLine("Loaded {0} attributes", _attributes.Count);
+        }
+
+        /// <summary>
+        /// Processes the type name hash list chunk
+        /// </summary>
+        /// <param name="chunk"></param>
+        /// <param name="reader"></param>
+        public void ProcessTypeNameHashListChunk(Chunk chunk, BinaryReader reader)
+        {
+            if (chunk.Size % 4 != 0)
+            {
+                throw new ChunkCorruptedException("Invalid CarPartPack type name hash list chunk!");
+            }
+
+            var numTypeNameHashes = chunk.Size >> 2;
+
+            if (numTypeNameHashes != _header.NumTypeNames)
+            {
+                throw new ChunkCorruptedException(
+                    $"CarPartPack header says there are {_header.NumTypeNames} type name hashes, but the type name hash list has {numTypeNameHashes}!");
+            }
+
+            for (int i = 0; i < numTypeNameHashes; i++)
+            {
+                _typeNameHashes.Add(reader.ReadUInt32());
+            }
+
+            Debug.WriteLine("Loaded {0} type name hashes", _typeNameHashes.Count);
+        }
+
+        /// <summary>
+        /// Processes the part list chunk
+        /// </summary>
+        /// <param name="chunk"></param>
+        /// <param name="reader"></param>
+        public void ProcessPartsChunk(Chunk chunk, BinaryReader reader)
+        {
+            if (chunk.Size % 0xC != 0)
+            {
+                throw new ChunkCorruptedException("Invalid CarPartPack part list chunk!");
+            }
+
+            int numParts = chunk.Size / 0xC;
+
+            if (numParts != _header.NumParts)
+            {
+                throw new ChunkCorruptedException($"CarPartPack header says there are {_header.NumParts} parts, but the part list has {numParts}!");
+            }
+
+            for (int i = 0; i < numParts; i++)
+            {
+                _parts.Add(BinaryHelpers.ReadStruct<DBCarPart>(reader));
+            }
+
+            Debug.WriteLine("Loaded {0} parts", _parts.Count);
         }
     }
 }

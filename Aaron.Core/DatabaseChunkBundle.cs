@@ -33,6 +33,18 @@ namespace Aaron.Core
                 case DatabaseChunkIds.CarPartDatabaseStringsChunk:
                     _carPartDatabaseLoader.ProcessStrings(chunk, reader);
                     break;
+                case DatabaseChunkIds.CarPartDatabaseAttributeOffsetTablesChunk:
+                    _carPartDatabaseLoader.ProcessAttributeOffsetTablesChunk(chunk, reader);
+                    break;
+                case DatabaseChunkIds.CarPartDatabaseAttributesChunk:
+                    _carPartDatabaseLoader.ProcessAttributesChunk(chunk, reader);
+                    break;
+                case DatabaseChunkIds.CarPartDatabaseModelNamesChunk:
+                    _carPartDatabaseLoader.ProcessTypeNameHashListChunk(chunk, reader);
+                    break;
+                case DatabaseChunkIds.CarPartDatabasePartsChunk:
+                    _carPartDatabaseLoader.ProcessPartsChunk(chunk, reader);
+                    break;
                 // Chunks that can be ignored (for now)
                 case DatabaseChunkIds.CarPartIndexArrayChunk:
                 case DatabaseChunkIds.CarInfoAnimHideTablesChunk:
