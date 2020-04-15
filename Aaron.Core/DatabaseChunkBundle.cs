@@ -2,6 +2,7 @@
 using System.IO;
 using Aaron.Core.Bundle;
 using Aaron.Core.Data;
+using Aaron.Core.Loaders;
 using Aaron.Core.Structures;
 using Aaron.Core.Utils;
 
@@ -9,11 +10,14 @@ namespace Aaron.Core
 {
     public class DatabaseChunkBundle : ChunkBundleBase
     {
+        private CarPartDatabaseLoader _carPartDatabaseLoader;
+
         public Database Database { get; }
 
         public DatabaseChunkBundle(Stream stream) : base(stream)
         {
             Database = new Database();
+            _carPartDatabaseLoader = new CarPartDatabaseLoader(Database);
         }
 
         protected override void ProcessChunk(Chunk chunk, BinaryReader reader)
@@ -23,6 +27,17 @@ namespace Aaron.Core
                 case DatabaseChunkIds.CarInfoArrayChunk:
                     ProcessCarInfoArrayChunk(chunk, reader);
                     break;
+                case DatabaseChunkIds.CarPartDatabaseHeaderChunk:
+                    _carPartDatabaseLoader.ProcessHeader(chunk, reader);
+                    break;
+                case DatabaseChunkIds.CarPartDatabaseStringsChunk:
+                    _carPartDatabaseLoader.ProcessStrings(chunk, reader);
+                    break;
+                // Chunks that can be ignored (for now)
+                case DatabaseChunkIds.CarPartIndexArrayChunk:
+                case DatabaseChunkIds.CarInfoAnimHideTablesChunk:
+                case DatabaseChunkIds.CarInfoAnimHookupChunk:
+                case DatabaseChunkIds.CarInfoSlotTypesChunk:
                 case 0x0: // null
                     break;
                 default:
