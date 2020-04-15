@@ -5,8 +5,4 @@
     <Platforms>x86</Platforms>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
-
 </Project>

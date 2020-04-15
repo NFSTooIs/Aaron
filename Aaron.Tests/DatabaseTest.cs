@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using Aaron.Core;
 using Aaron.Core.Compression;
+using Aaron.Core.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Aaron.Tests
@@ -23,9 +24,17 @@ namespace Aaron.Tests
         }
 
         [TestMethod]
-        public void TestSomething()
+        public void TestCarRecordLookup()
         {
-            Assert.AreEqual(true, true);
+            CarRecord carRecord = _database.CarRecordManager.FindCarRecordByName("BMWM3GTR");
+
+            Assert.IsNotNull(carRecord);
+            Assert.AreEqual("BMWM3GTR", carRecord.CarTypeName);
+            Assert.AreEqual("BMWM3GTR", carRecord.BaseModelName);
+            Assert.AreEqual(@"CARS\BMWM3GTR\GEOMETRY.BIN", carRecord.GeometryFilename);
+            Assert.AreEqual("BMW", carRecord.ManufacturerName);
+            Assert.AreEqual(CarUsageType.Racing, carRecord.UsageType);
+            Assert.AreEqual(CarMemoryType.Racing, carRecord.MemoryType);
         }
     }
 }

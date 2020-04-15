@@ -30,5 +30,25 @@
         /// The offset of the end of the chunk
         /// </summary>
         public long EndOffset => DataOffset + Size;
+
+        /// <summary>
+        /// Calculates the size of the chunk data when alignment is considered.
+        /// </summary>
+        /// <param name="boundary"></param>
+        /// <returns></returns>
+        public int GetAlignedSize(int boundary)
+        {
+            if (DataOffset % boundary != 0)
+            {
+                int diff = (int)(boundary - DataOffset % boundary);
+
+                if (diff > 0)
+                {
+                    return Size - diff;
+                }
+            }
+
+            return Size;
+        }
     }
 }
