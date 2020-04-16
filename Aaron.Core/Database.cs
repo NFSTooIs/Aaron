@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Aaron.Core.Data;
-using Aaron.Core.Managers;
+﻿using Aaron.Core.Managers;
 
 namespace Aaron.Core
 {

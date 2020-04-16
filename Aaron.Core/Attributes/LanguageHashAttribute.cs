@@ -1,8 +1,4 @@
-﻿using System;
-using Aaron.Core.Data;
-using Aaron.Core.Structures;
-
-namespace Aaron.Core.Attributes
+﻿namespace Aaron.Core.Attributes
 {
     public class LanguageHashAttribute : IntAttribute
     {
