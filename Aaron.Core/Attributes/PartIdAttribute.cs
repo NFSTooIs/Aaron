@@ -9,10 +9,9 @@ namespace Aaron.Core.Attributes
     {
         public CarPartId PartId { get; set; }
         public byte UnknownValue { get; set; }
-
-        public override string GetName()
+        public override string Name
         {
-            return "PARTID_UPGRADE_GROUP";
+            get => "PARTID_UPGRADE_GROUP";
         }
 
         public override IConvertible SaveValue()

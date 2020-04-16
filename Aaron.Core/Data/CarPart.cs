@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Aaron.Core.Data
 {
@@ -20,6 +21,16 @@ namespace Aaron.Core.Data
         public CarPart()
         {
             Attributes = new List<CarPartAttribute>();
+        }
+
+        /// <summary>
+        /// Finds the attribute with the given name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public CarPartAttribute FindAttribute(string name)
+        {
+            return Attributes.Find(a => string.Equals(a.Name, name, StringComparison.InvariantCulture));
         }
     }
 }

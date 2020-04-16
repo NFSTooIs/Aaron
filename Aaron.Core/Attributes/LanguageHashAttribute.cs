@@ -1,10 +1,12 @@
-﻿namespace Aaron.Core.Attributes
+﻿using Aaron.Core.Attributes.Primitives;
+
+namespace Aaron.Core.Attributes
 {
     public class LanguageHashAttribute : IntAttribute
     {
-        public override string GetName()
+        public override string Name
         {
-            return "LANGUAGE_HASH";
+            get => "LANGUAGEHASH";
         }
     }
 }

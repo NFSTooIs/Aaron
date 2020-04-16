@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Aaron.Core.Data;
 using Aaron.Core.Structures;
 
-namespace Aaron.Core.Attributes
+namespace Aaron.Core.Attributes.Primitives
 {
     public abstract class DoubleStringAttribute : StringBasedAttribute
     {

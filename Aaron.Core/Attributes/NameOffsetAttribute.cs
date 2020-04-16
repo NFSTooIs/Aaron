@@ -2,11 +2,11 @@
 
 namespace Aaron.Core.Attributes
 {
-    public class LodNamePrefixAttribute : IntAttribute
+    public class NameOffsetAttribute : SingleStringAttribute
     {
         public override string Name
         {
-            get => "LOD_NAME_PREFIX_SELECTOR";
+            get => "NAME_OFFSET";
         }
     }
 }

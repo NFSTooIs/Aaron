@@ -36,5 +36,16 @@ namespace Aaron.Tests
             Assert.AreEqual(CarUsageType.Racing, carRecord.UsageType);
             Assert.AreEqual(CarMemoryType.Racing, carRecord.MemoryType);
         }
+
+        [TestMethod]
+        public void TestCarPartCollectionLookup()
+        {
+            CarPartCollection carPartCollection = _database.CarPartManager.FindCarPartCollectionByName("VECTORVINYL");
+            Assert.IsNotNull(carPartCollection);
+            Assert.AreEqual(3395, carPartCollection.Parts.Count);
+
+            CarPart caymansVinylPart = carPartCollection.FindPartByName("2T_CAYMANS");
+            Assert.IsNotNull(caymansVinylPart);
+        }
     }
 }

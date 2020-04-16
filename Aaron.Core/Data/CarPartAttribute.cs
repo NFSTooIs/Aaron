@@ -13,13 +13,13 @@ namespace Aaron.Core.Data
         /// Gets the name of the attribute
         /// </summary>
         /// <returns></returns>
-        public abstract string GetName();
+        public abstract string Name { get; }
 
         /// <summary>
         /// Gets the name hash of the attribute
         /// </summary>
         /// <returns></returns>
-        public virtual uint GetHash() => HashingHelpers.BinHash(GetName());
+        public virtual uint GetHash() => HashingHelpers.BinHash(Name);
 
         /// <summary>
         /// Gets the attribute value to be used in the saving process

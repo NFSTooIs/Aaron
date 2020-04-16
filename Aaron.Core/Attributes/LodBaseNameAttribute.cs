@@ -1,10 +1,12 @@
-﻿namespace Aaron.Core.Attributes
+﻿using Aaron.Core.Attributes.Primitives;
+
+namespace Aaron.Core.Attributes
 {
     public class LodBaseNameAttribute : DoubleStringAttribute
     {
-        public override string GetName()
+        public override string Name
         {
-            return "LOD_BASE_NAME";
+            get => "LOD_BASE_NAME";
         }
     }
 }

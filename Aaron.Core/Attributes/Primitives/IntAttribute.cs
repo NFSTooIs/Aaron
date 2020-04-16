@@ -2,27 +2,22 @@
 using Aaron.Core.Data;
 using Aaron.Core.Structures;
 
-namespace Aaron.Core.Attributes
+namespace Aaron.Core.Attributes.Primitives
 {
     /// <summary>
     /// Generic attribute that stores an unsigned integer value.
     /// </summary>
     public class IntAttribute : CarPartAttribute
     {
-        public uint Hash { get; set; }
+        public IntAttribute(string name)
+        {
+            Name = name;
+        }
+
+        public IntAttribute() {}
+
+        public override string Name { get; }
         public uint Value { get; set; }
-
-        public IntAttribute(uint hash)
-        {
-            Hash = hash;
-        }
-
-        public IntAttribute() { }
-
-        public override string GetName()
-        {
-            return $"0x{Hash:X8}";
-        }
 
         public override IConvertible SaveValue()
         {

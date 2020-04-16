@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Aaron.Core.Attributes;
+using Aaron.Core.Attributes.Primitives;
 using Aaron.Core.Bundle;
 using Aaron.Core.Data;
 using Aaron.Core.InternalData;
@@ -253,9 +254,83 @@ namespace Aaron.Core.Loaders
                 case "LOD_BASE_NAME":
                     attribute = new LodBaseNameAttribute();
                     break;
+                case "NAME_OFFSET":
+                    attribute = new NameOffsetAttribute();
+                    break;
+                case "LOD_CHARACTERS_OFFSET":
+                    attribute = new LodCharactersOffsetAttribute();
+                    break;
+                case "LOD_NAME_PREFIX_NAMEHASH":
+                    attribute = new LodNamePrefixNameHashAttribute();
+                    break;
+                case "ONLINE":
+                case "STOCK":
+                case "CARBONFIBRE":
+                case "CENTER":
+                case "0x87557E1E":
+                case "0xF9661A07":
+                case "STOCK_MATERIAL":
+                case "USEMARKER1":
+                case "FULLBODY":
+                case "MIRROR":
+                case "ISDECAL":
+                    attribute = new BoolAttribute(attributeName);
+                    break;
+                case "TEXTURE":
+                    attribute = new TextureAttribute();
+                    break;
+                case "0x10C98090":
+                case "MAX_LOD":
+                case "COLOR0ID":
+                case "COLOR1ID":
+                case "COLOR2ID":
+                case "COLOR3ID":
+                case "VINYLLANGUAGEHASH":
+                case "TEXTUREHASH":
+                case "CV":
+                case "SPECIFICCARNAME":
+                case "0x6BA02C05":
+                case "MAT0":
+                case "MAT1":
+                case "MAT2":
+                case "MAT3":
+                case "MAT4":
+                case "MAT5":
+                case "MAT6":
+                case "MAT7":
+                case "0xC9818DFC":
+                case "0xEBB03E66":
+                case "MATNAMEA":
+                case "MATNAMEB":
+                case "0xD68A7BAB":
+                case "RED":
+                case "GREEN":
+                case "BLUE":
+                case "SWATCH":
+                case "GROUPLANGUAGEHASH":
+                case "0x04B39858":
+                case "0x5412A1D9":
+                case "MODEL_TABLE_OFFSET":
+                case "MORPHTARGET_NUM":
+                case "0xCE7D8DB5":
+                case "0x7D29CF3E":
+                case "0x65F58556":
+                case "GLOSS":
+                case "0xB5548ED7":
+                case "0x1B0EA1A9":
+                case "0xEB0101E2":
+                case "0xE80A3B62":
+                case "PAINTGROUP":
+                case "DAMAGELEVEL":
+                    attribute = new IntAttribute(attributeName);
+                    break;
+                case "BLEND":
+                case "0x9A9B6DDC":
+                    attribute = new FloatAttribute(attributeName);
+                    break;
                 default:
-                    attribute = new IntAttribute(attributeData.NameHash);
-                    Debug.WriteLine("WARNING: Unimplemented attribute {0}", new object[] { attributeName });
+                    attribute = new IntAttribute(attributeName);
+                    Debug.WriteLine("WARNING: Unimplemented attribute {0}; value={1} (0x{1:X8})", attributeName, attributeData.UnsignedParam);
                     break;
             }
 
